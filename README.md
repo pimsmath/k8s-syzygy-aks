@@ -5,6 +5,17 @@ that policy to the IAM object you will be creating the cluster as. I used an IAM
 user called iana. The files in the terraform directory should apply to create a
 new cluster.
 
+## Define variables
+```
+# subscription id
+az account list | grep id
+# tenant id
+az account list | grep tenantId
+# client id (appId) and secret (password)
+az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/SUBSCRIPTION_ID"
+```
+
+## Provision Cluster
 ```bash
 $ terraform init
 $ terraform apply
