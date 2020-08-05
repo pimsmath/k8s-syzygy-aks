@@ -22,3 +22,8 @@ variable "subscription_id" {
 variable "tenant_id" {
   description = "Azure tenant ID"
 }
+
+variable "node_size" {
+  default = "Standard_D4s_v3"
+  description = "Kubernetes node size"
+}

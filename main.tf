@@ -15,11 +15,12 @@ provider "aws" {
 }
 
 provider "azurerm" {
-    version = ">=1.36.1"
-    subscription_id = "${var.subscription_id}"
-    client_id       = "${var.kubernetes_client_id}"
-    client_secret   = "${var.kubernetes_client_secret}"
-    tenant_id       = "${var.tenant_id}"
+  version = ">=2.20.0"
+  subscription_id = var.subscription_id
+  client_id       = var.kubernetes_client_id
+  client_secret   = var.kubernetes_client_secret
+  tenant_id       = var.tenant_id
+  features {}
 }
 
 provider "random" {
@@ -49,29 +50,33 @@ resource "random_string" "suffix" {
 
 resource "azurerm_resource_group" "jhub" {
   name     = "${local.cluster_name}-k8s-resources"
-  location = "${var.location}"
+  location = var.location
 }
 
 resource "azurerm_kubernetes_cluster" "jhub" {
-  name                = "${local.cluster_name}"
-  location            = "${azurerm_resource_group.jhub.location}"
-  resource_group_name = "${azurerm_resource_group.jhub.name}"
+  name                = local.cluster_name
+  location            = azurerm_resource_group.jhub.location
+  resource_group_name = azurerm_resource_group.jhub.name
   dns_prefix          = "${var.prefix}-k8s"
 
-  agent_pool_profile {
-    name            = "default"
-    count           = 3
-    vm_size         = "Standard_D1_v2"
-    os_type         = "Linux"
-    os_disk_size_gb = 30
+  default_node_pool {
+	name            = "default"
+	node_count      = 3
+	vm_size    	    = var.node_size
+	os_disk_size_gb = 30
   }
 
   service_principal {
-    client_id     = "${var.kubernetes_client_id}"
-    client_secret = "${var.kubernetes_client_secret}"
+    client_id     = var.kubernetes_client_id
+    client_secret = var.kubernetes_client_secret
   }
 
   tags = {
     Environment = "Production"
   }
+
+  provisioner "local-exec" {
+	command = "az aks get-credentials --resource-group ${azurerm_kubernetes_cluster.jhub.resource_group_name} --name ${azurerm_kubernetes_cluster.jhub.name}"
+  }
 }
+
