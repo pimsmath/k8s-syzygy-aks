@@ -27,3 +27,19 @@ variable "node_size" {
   default = "Standard_D4s_v3"
   description = "Kubernetes node size"
 }
+
+variable "enable_netapp" {
+  default = false
+  description = "Whether or not to use netapp storage"
+  type = bool
+}
+
+variable "netapp_service_level" {
+  default = "Standard"
+  description = "The service level of the file system. Valid values include Premium, Standard, or Ultra."
+}
+
+variable "netapp_size_in_tb" {
+  default = "4"
+  description = "Provisioned size of the pool in TB. Value must be between 4 and 500"
+}

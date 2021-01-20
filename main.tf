@@ -79,4 +79,3 @@ resource "azurerm_kubernetes_cluster" "jhub" {
 	command = "az aks get-credentials --resource-group ${azurerm_kubernetes_cluster.jhub.resource_group_name} --name ${azurerm_kubernetes_cluster.jhub.name}"
   }
 }
-
